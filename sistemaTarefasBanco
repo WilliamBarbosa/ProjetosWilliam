@@ -1,0 +1,20 @@
+CREATE DATABASE sistematarefas;
+
+USE sistematarefas;
+
+CREATE TABLE usuarios(
+    idusuario INT(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    email VARCHAR(45),
+    senha VARCHAR(45)			
+);
+
+
+CREATE TABLE tarefas (
+    codtarefa INT(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    nometarefa VARCHAR(45),
+    descricao VARCHAR(255),
+    arquivo MEDIUMBLOB, 
+    idusuario INT(11),
+    FOREIGN KEY (idusuario) REFERENCES usuarios(idusuario)
+	
+);
