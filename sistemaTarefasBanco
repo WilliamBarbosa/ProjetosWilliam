@@ -11,10 +11,12 @@ CREATE TABLE usuarios(
 
 CREATE TABLE tarefas (
     codtarefa INT(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
-    nometarefa VARCHAR(45),
+    nometarefa VARCHAR(255),
     descricao VARCHAR(255),
     arquivo MEDIUMBLOB, 
-    idusuario INT(11),
+    tipo VARCHAR(255),
+    nometarefa VARCHAR(255),
+    tamanho VARCHAR(45),
     FOREIGN KEY (idusuario) REFERENCES usuarios(idusuario)
 	
 );
