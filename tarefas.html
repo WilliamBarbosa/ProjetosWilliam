@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>Formulario de TAREFA</title>
+</head>
+<body onload="listaTarefas()">
+
+<script>
+
+
+	
+function sair() {
+  var xhttp;
+
+  xhttp = new XMLHttpRequest(); 
+  var params = "funcao=sair";
+  
+  xhttp.open("POST", "logins.php", false);
+  xhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+  xhttp.send(params);
+  
+  window.location.href = "http://localhost/loginVoxus/index.html"; 
+	
+    
+  
+}
+	
+
+function cadtarefas() {
+  var xhttp;
+
+  xhttp = new XMLHttpRequest(); 
+  
+  var params = "funcao=cadtarefas"+"&nome="+document.getElementById("nome").value+"&descricao="+
+  document.getElementById("descricao").value+"&idtarefa="+document.getElementById("idtarefa").value;
+  
+  xhttp.open("POST", "logins.php", false);
+  xhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+  xhttp.send(params);
+  
+
+  var json = JSON.parse(xhttp.responseText);
+  
+
+
+  if(json[0].situacao == 1)
+	alert("A senha não é igual a sua confirmação");
+  else if(json[0].situacao == 0){
+        alert(json[0].mensagem);
+	}
+	
+   
+  
+}
+
+function listaTarefas(){
+
+var xhttp;
+
+  xhttp = new XMLHttpRequest(); 
+  
+  var params = "funcao=listaTarefas";
+  
+  xhttp.open("POST", "logins.php", false);
+  xhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+  xhttp.send(params);
+  
+
+  var json = JSON.parse(xhttp.responseText);
+  
+
+
+	var table = document.getElementById('myTable');
+	
+	table.style.width  = '100%';
+    table.style.border = '1px solid black';
+	
+	var row0 = document.createElement('TR');
+	row0.style.width  = '100%';
+	row0.setAttribute("align","center");
+	
+	var cabecalho = document.createElement('TH');
+	cabecalho.setAttribute("colspan","5");
+	cabecalho.innerHTML = 'TAREFAS';
+	
+	row0.appendChild(cabecalho);
+	
+	table.appendChild(row0);
+	
+	for(var i = 0; i < json.length; i++)
+	{
+		var row = document.createElement('TR');
+		var cell0 = document.createElement('TD'); 
+        cell0.style.border = '1px solid black';		
+		var cellText = document.createTextNode(json[i].nome); 
+        cell0.appendChild(cellText);
+		
+		row.appendChild(cell0);
+		
+		var cell1 = document.createElement('TD'); 
+		cell1.style.border = '1px solid black';	
+		cellText = document.createTextNode(json[i].descricao); 
+        cell1.appendChild(cellText);
+		
+		row.appendChild(cell1);
+		
+		var cell2 = document.createElement('TD');
+		cell2.style.width = '150px';	
+		cell2.style.border = '1px solid black';			
+		cell2.innerHTML = '<a target="_blank" href="baixar_arquivo.php?id='+json[i].codtarefa+'">Fazer Download</a>';
+		row.appendChild(cell2);
+		table.appendChild(row);
+		
+		var cell3 = document.createElement('TD');
+		cell3.style.border = '1px solid black';	
+        cell3.style.width = '60px';		
+		cell3.innerHTML = '<input type="button" id="Editar" value="Editar" style="float:right;font-size:16px;border-radius:10px;cursor:pointer;" onclick="editar('+json[i].codtarefa+');">';
+		row.appendChild(cell3);
+		table.appendChild(row);
+		
+		var cell4 = document.createElement('TD');
+		cell4.style.border = '1px solid black';	
+        cell4.style.width = '60px';			
+		cell4.innerHTML = '<input type="button" id="Excluir" value="Excluir" style="float:right;font-size:16px;border-radius:10px;cursor:pointer;" onclick="excluir('+json[i].codtarefa+');">';
+		row.appendChild(cell4);
+		table.appendChild(row);
+	}
+	
+	
+	
+	
+}
+
+
+
+function editar(codtarefa){
+
+var xhttp;
+
+  xhttp = new XMLHttpRequest(); 
+  
+  var params = "funcao=editar"+"&codtarefa="+codtarefa;
+  
+  xhttp.open("POST", "logins.php", false);
+  xhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+  xhttp.send(params);
+  
+
+  var json = JSON.parse(xhttp.responseText);
+  
+  document.getElementById("nome").value = json[0].nome;
+  document.getElementById("descricao").value = json[0].descricao;
+  document.getElementById("cadtarefa").value = "Alterar";
+  document.getElementById("idtarefa").value = json[0].codtarefa;
+  document.getElementById("cancelar").style.display = "";
+  
+	
+}
+
+function excluir(codtarefa){
+
+var xhttp;
+
+  xhttp = new XMLHttpRequest(); 
+  
+  var params = "funcao=excluir"+"&codtarefa="+codtarefa;
+  
+  xhttp.open("POST", "logins.php", false);
+  xhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+  xhttp.send(params);
+  
+
+  var json = JSON.parse(xhttp.responseText);
+  
+  document.getElementById("myTable").innerHTML = "";
+  listaTarefas();
+  
+	
+}
+
+function cancel(){
+
+  
+  document.getElementById("nome").value = "";
+  document.getElementById("descricao").value = "";
+  document.getElementById("file").value = "";
+  document.getElementById("cadtarefa").value = "Cadastrar";
+  document.getElementById("idtarefa").value = 0;
+  document.getElementById("cancelar").style.display = "none";
+  
+	
+}
+
+</script>
+<style>
+form {
+    width: 80%;
+    margin: 0 auto;
+}
+
+label, input {
+    display: inline-block;
+	margin-left:1%;
+}
+#sair:hover{
+background-color:red;
+}
+#cadtarefa:hover{
+background-color:lightblue;
+}
+#file:hover{
+background-color:lightpink;
+}
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+th, td {
+    padding: 5px;
+    text-align: center;  
+    align-itens: center; 	
+}
+
+
+</style>
+
+
+
+<div style="width:100%; height:auto;  display:flex;  background:lightyellow;" align="middle">
+
+<form id="ajax_form" name="ajax_form" action="cadtarefas.php" method="post" enctype="multipart/form-data"><br>
+<span>CADASTRO DE TAREFAS</span><br><br>
+<label>Nome : </label><input type="text" name="nome" id="nome" > 
+<label>Descrição : </label><input type="text" name="descricao" id="descricao"> 
+<label>
+<input id="file" name="file" type="file" />
+
+</label>
+
+
+ <input type="submit" id="cadtarefa" name="cadtarefa" value="Cadastrar" style="font-size:16px;border-radius:5px;cursor:pointer;" onclick="">
+ <input type="button" id="cancelar" value="Cancelar" style="display:none;margin-left:10px;font-size:16px;border-radius:5px;cursor:pointer;" onclick="cancel();">
+ <input type="text" id="idtarefa" name="idtarefa" value="0" style="display:none;">
+ 
+  
+</form>
+<input type="button" id="sair" value="Sair" style="float:right;font-size:30px;border-radius:10px;cursor:pointer;" onclick="sair();">
+</div><br>
+
+<table id="myTable"></table>
+</body>
+
+</html>
